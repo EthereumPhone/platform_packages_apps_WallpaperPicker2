@@ -70,6 +70,13 @@ import com.android.wallpaper.widget.LockScreenPreviewer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.widget.Toast;
+import android.provider.MediaStore;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Canvas;
+
 /** The class to control the wallpaper section view. */
 public class WallpaperSectionController implements
         CustomizationSectionController<WallpaperSectionView>,
@@ -186,8 +193,23 @@ public class WallpaperSectionController implements
                         mDisplayUtils.isOnWallpaperDisplay(mActivity));
             }
         });
+	wallpaperSectionView.findViewById(R.id.save_new_wallpaper).setOnClickListener(
+                 new View.OnClickListener() {
+                     public void onClick(View view) {
+                         saveCurrentWallpaper(view);
+                         Toast.makeText(mAppContext, "Wallpaper saved", Toast.LENGTH_SHORT).show();
+                     }
+                 });
 
-        mLockscreenPreviewCard = wallpaperSectionView.findViewById(R.id.lock_preview);
+        wallpaperSectionView.findViewById(R.id.generate_new_wallpaper).setOnClickListener(
+            new View.OnClickListener() {
+                public void onClick(View view) {
+			Uri webpage = Uri.parse("ethos-wallpaper://eth.com");
+			Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+			mActivity.startActivity(webIntent);
+		}
+	});
+	mLockscreenPreviewCard = wallpaperSectionView.findViewById(R.id.lock_preview);
         mLockscreenPreviewCard.setContentDescription(mAppContext.getString(
                 R.string.lockscreen_wallpaper_preview_card_content_description));
         mLockscreenPreviewProgress = mLockscreenPreviewCard.findViewById(
@@ -224,6 +246,25 @@ public class WallpaperSectionController implements
         );
 
         return wallpaperSectionView;
+    }
+
+    public void saveCurrentWallpaper(View view) {
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(mAppContext);
+        final Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+        MediaStore.Images.Media.insertImage(mAppContext.getContentResolver(), drawableToBitmap(wallpaperDrawable), "" , "");
+    }
+
+    public Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
     private void updateWorkspacePreview(SurfaceView workspaceSurface,
