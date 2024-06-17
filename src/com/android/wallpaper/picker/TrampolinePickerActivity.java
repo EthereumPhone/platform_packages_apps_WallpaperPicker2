@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.android.wallpaper.module.LargeScreenMultiPanesChecker;
 import com.android.wallpaper.module.MultiPanesChecker;
 
+
 /**
  *  Activity to relinquish task identity for multi-pane and
  *  prevent launching incorrect base intent in non multi-pane.

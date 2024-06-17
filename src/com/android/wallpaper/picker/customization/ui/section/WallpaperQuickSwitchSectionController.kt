@@ -26,6 +26,7 @@ import com.android.wallpaper.model.CustomizationSectionController
 import com.android.wallpaper.picker.CategorySelectorFragment
 import com.android.wallpaper.picker.customization.ui.binder.WallpaperQuickSwitchSectionBinder
 import com.android.wallpaper.picker.customization.ui.viewmodel.WallpaperQuickSwitchViewModel
+import android.content.Intent
 
 /** Controls a section that lets the user switch wallpapers quickly. */
 class WallpaperQuickSwitchSectionController(
@@ -53,7 +54,9 @@ class WallpaperQuickSwitchSectionController(
             lifecycleOwner = lifecycleOwner,
             isThumbnailFadeAnimationEnabled = isThumbnailFadeAnimationEnabled,
             onNavigateToFullWallpaperSelector = {
-                navigator.navigateTo(CategorySelectorFragment())
+                val intent = Intent()
+                intent.setClassName("org.ethosmobile.ethoswallpaper", "org.ethosmobile.ethoswallpaper.MainActivity")
+                context.startActivity(intent)
             },
         )
         return view
